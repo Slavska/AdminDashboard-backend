@@ -1,7 +1,7 @@
 import { ctrlWrapper } from "../decorators/index.js";
 import Dashboard from "../models/dashboard.js";
 import Customer from "../models/customer.js";
-import { HttpError, handleGetDashboardsData } from "../helpers/index.js";
+import { HttpError } from "../helpers/index.js";
 import Product from "../models/product.js";
 import Supplier from "../models/supplier.js";
 

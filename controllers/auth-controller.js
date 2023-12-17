@@ -2,7 +2,7 @@ import { ctrlWrapper } from "../decorators/index.js";
 import bcrypt from "bcryptjs";
 import User from "../models/user.js";
 import jwt from "jsonwebtoken";
-import { HttpError, handleGetDashboardsData } from "../helpers/index.js";
+import { HttpError } from "../helpers/index.js";
 const { JWT_SECRET } = process.env;
 
 const signup = async (req, res) => {
