@@ -45,7 +45,7 @@ For detailed descriptions of API requests and interactions, run this project end
 
 ## Project API Queries
 
-https://slavska.github.io/AdminDashboard-backend/api <<BASE_URL>>
+https://admin-dashboards-backend.onrender.comapi <<BASE_URL>>
 
 BASE_URL/user/signup <<registration>>
 
