@@ -5,20 +5,39 @@ import { HttpError } from "../helpers/index.js";
 import Product from "../models/product.js";
 import Supplier from "../models/supplier.js";
 
-export const getDashboardData = async (req, res) => {
+export const getDashboardData = async (req, res, next) => {
   try {
-    const dashboards = await Dashboard.find({});
-    const products = (await Product.find({})).length;
-    const customers = await Customer.find({});
-    const suppliers = (await Supplier.find({})).length;
+    const { page = 1 } = req.query;
+    const perPage = 7;
+    const skip = (page - 1) * perPage;
 
-    if (!dashboards || dashboards.length === 0) {
-      throw HttpError(404, `Dashboard not found`);
+    const totalDashboards = await Dashboard.countDocuments({});
+
+    if (totalDashboards === 0) {
+      throw new HttpError(404, `Dashboards not found`);
     }
 
-    res.status(200).json({ dashboards, customers, suppliers, products });
+    if (skip >= totalDashboards) {
+      throw new HttpError(404, `No more dashboards available on page ${page}`);
+    }
+    const dashboards = await Dashboard.find({}).skip(skip).limit(perPage);
+
+    const response = {
+      dashboards: {
+        dashboards: dashboards,
+        totalDashboards,
+        perPage,
+        currentPage: page,
+        totalPages: Math.ceil(totalDashboards / perPage),
+      },
+      products: (await Product.find({})).length,
+      customers: await Customer.find({}),
+      suppliers: (await Supplier.find({})).length,
+    };
+
+    res.status(200).json(response);
   } catch (error) {
-    console.error("Error fetching orders:", error);
+    console.error("Error fetching dashboards:", error);
     next(error);
   }
 };

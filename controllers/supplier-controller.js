@@ -74,7 +74,6 @@ const deleteById = async (req, res, next) => {
 };
 export default {
   getAll: ctrlWrapper(getAll),
-  getByName: ctrlWrapper(getByName),
   getById: ctrlWrapper(getById),
   updateById: ctrlWrapper(updateById),
   deleteById: ctrlWrapper(deleteById),
