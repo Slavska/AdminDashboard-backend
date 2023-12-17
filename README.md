@@ -45,7 +45,7 @@ For detailed descriptions of API requests and interactions, run this project end
 
 ## Project API Queries
 
-https://admin-dashboards-backend.onrender.com/api <<BASE_URL>>
+https://admin-dashboards-backend-ei4w.onrender.com <<BASE_URL>>
 
 BASE_URL/user/signup <<registration>>
 
