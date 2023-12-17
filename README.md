@@ -53,7 +53,36 @@ BASE_URL/user/login <<login>>
 
 BASE_URL/user/logout <<logout>>
 
-BASE_URL/user/current <<current>>
+BASE_URL/user/user-info <<current>>
 
 BASE_URL/dashboard/ <<get all DASHBOARDS>>
 
+BASE_URL/customer/ <<get all Customers>>
+
+BASE_URL/customer/:customerId <<get CustomerID>>
+
+BASE_URL/orders <<get All orders>>
+
+BASE_URL/orders/byName <<get order byName>>
+
+BASE_URL/products <<get All products>>
+
+BASE_URL/products <<post add product>>
+
+BASE_URL/products/byName <<get product byNAme>>
+
+BASE_URL/product/:productId <<get ProductID>>
+
+BASE_URL/product/:productId <<put ProductID>>
+
+BASE_URL/product/:productId <<delete ProductID>>
+
+BASE_URL/suppliers <<get All suppliers>>
+
+BASE_URL/suppliers <<post add suppliers>>
+
+BASE_URL/suppliers/byName <<get suppliers byNAme>>
+
+BASE_URL/suppliers/:suppliersId <<get suppliersID>>
+
+BASE_URL/suppliers/:suppliersId <<put suppliersID>>
