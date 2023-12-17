@@ -18,37 +18,33 @@ const getById = async (req, res, next) => {
 
 const getAll = async (req, res, next) => {
   try {
-    const products = await Product.find({});
+    const { page = 1, name } = req.query;
+    const pageSize = 5;
+    const skip = (page - 1) * pageSize;
 
-    if (!products || products.length === 0) {
-      throw HttpError(404, `Products not found`);
+    let query = {};
+    if (name) {
+      query.name = { $regex: new RegExp(name, "i") };
     }
+    const totalProducts = await Product.countDocuments(query);
 
-    res.status(200).json(products);
+    if (totalProducts === 0) {
+      throw new HttpError(404, `Products not found`);
+    }
+    if (skip >= totalProducts) {
+      throw new HttpError(404, `No more products available on page ${page}`);
+    }
+    const products = await Product.find(query).skip(skip).limit(pageSize);
+
+    res.status(200).json({
+      totalProducts,
+      pageSize,
+      currentPage: page,
+      totalPages: Math.ceil(totalProducts / pageSize),
+      products,
+    });
   } catch (error) {
     console.error("Error fetching products:", error);
-    next(error);
-  }
-};
-const getByName = async (req, res, next) => {
-  const { name } = req.query;
-
-  if (!name) {
-    return next(HttpError(400, "Name parameter is required"));
-  }
-
-  try {
-    const products = await Product.find({
-      name: { $regex: new RegExp(name, "i") },
-    });
-
-    if (!products || products.length === 0) {
-      throw HttpError(404, `No products found for name ${name}`);
-    }
-
-    res.status(200).json(products);
-  } catch (error) {
-    console.error("Error fetching products by name:", error);
     next(error);
   }
 };
@@ -78,7 +74,6 @@ const deleteById = async (req, res, next) => {
 };
 export default {
   getAll: ctrlWrapper(getAll),
-  getByName: ctrlWrapper(getByName),
   getById: ctrlWrapper(getById),
   updateById: ctrlWrapper(updateById),
   deleteById: ctrlWrapper(deleteById),

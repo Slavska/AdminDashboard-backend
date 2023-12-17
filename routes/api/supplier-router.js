@@ -21,7 +21,6 @@ supplierRouter.post(
   supplierController.add
 );
 supplierRouter.get("/", supplierController.getAll);
-supplierRouter.get("/byName", supplierController.getByName);
 supplierRouter.get(
   "/:supplierId",
   isValidSupplierId,

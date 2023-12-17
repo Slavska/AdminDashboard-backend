@@ -18,37 +18,33 @@ const getById = async (req, res, next) => {
 
 const getAll = async (req, res, next) => {
   try {
-    const suppliers = await Supplier.find({});
+    const { page = 1, name } = req.query;
+    const pageSize = 5;
+    const skip = (page - 1) * pageSize;
 
-    if (!suppliers || suppliers.length === 0) {
-      throw HttpError(404, `supplier not found`);
+    let query = {};
+    if (name) {
+      query.name = { $regex: new RegExp(name, "i") };
     }
+    const totalSuppliers = await Supplier.countDocuments(query);
 
-    res.status(200).json(suppliers);
+    if (totalSuppliers === 0) {
+      throw new HttpError(404, `Suppliers not found`);
+    }
+    if (skip >= totalSuppliers) {
+      throw new HttpError(404, `No more Suppliers available on page ${page}`);
+    }
+    const suppliers = await Supplier.find(query).skip(skip).limit(pageSize);
+
+    res.status(200).json({
+      totalSuppliers,
+      pageSize,
+      currentPage: page,
+      totalPages: Math.ceil(totalSuppliers / pageSize),
+      suppliers,
+    });
   } catch (error) {
     console.error("Error fetching suppliers:", error);
-    next(error);
-  }
-};
-const getByName = async (req, res, next) => {
-  const { name } = req.query;
-
-  if (!name) {
-    return next(HttpError(400, "Name parameter is required"));
-  }
-
-  try {
-    const suppliers = await Supplier.find({
-      name: { $regex: new RegExp(name, "i") },
-    });
-
-    if (!suppliers || suppliers.length === 0) {
-      throw HttpError(404, `No suppliers found for name ${name}`);
-    }
-
-    res.status(200).json(suppliers);
-  } catch (error) {
-    console.error("Error fetching suppliers by name:", error);
     next(error);
   }
 };

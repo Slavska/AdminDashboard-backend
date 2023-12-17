@@ -13,15 +13,33 @@ const getById = async (req, res, next) => {
 
 const getAll = async (req, res, next) => {
   try {
-    const orders = await Customer.find({});
+    const { page = 1, name } = req.query;
+    const pageSize = 5;
+    const skip = (page - 1) * pageSize;
 
-    if (!orders || orders.length === 0) {
-      throw HttpError(404, `Customer not found`);
+    let query = {};
+    if (name) {
+      query.name = { $regex: new RegExp(name, "i") };
     }
+    const totalCustomers = await Customer.countDocuments(query);
 
-    res.status(200).json(orders);
+    if (totalCustomers === 0) {
+      throw new HttpError(404, `Customers not found`);
+    }
+    if (skip >= totalCustomers) {
+      throw new HttpError(404, `No more Customers available on page ${page}`);
+    }
+    const customers = await Customer.find(query).skip(skip).limit(pageSize);
+
+    res.status(200).json({
+      totalCustomers,
+      pageSize,
+      currentPage: page,
+      totalPages: Math.ceil(totalCustomers / pageSize),
+      customers,
+    });
   } catch (error) {
-    console.error("Error fetching orders:", error);
+    console.error("Error fetching customers:", error);
     next(error);
   }
 };

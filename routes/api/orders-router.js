@@ -11,11 +11,5 @@ const orderAddValidate = validateBody(orderSchema.orderAddSchema);
 ordersRouter.use(authenticate);
 
 ordersRouter.get("/", authenticate, ordersController.getAll);
-ordersRouter.get(
-  "/byName",
-  authenticate,
-  orderAddValidate,
-  ordersController.getByName
-);
 
 export default ordersRouter;

@@ -16,7 +16,6 @@ productRouter.use(authenticate);
 
 productRouter.post("/", isEmptyBody, productAddValidate, productController.add);
 productRouter.get("/", productController.getAll);
-productRouter.get("/byName", productController.getByName);
 productRouter.get("/:productId", isValidProductId, productController.getById);
 productRouter.put(
   "/:productId",
