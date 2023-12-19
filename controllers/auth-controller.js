@@ -26,23 +26,36 @@ const signup = async (req, res) => {
 };
 
 const signin = async (req, res) => {
-  const { email, password } = req.body;
-  const user = await User.findOne({ email });
-  if (!user) {
-    throw HttpError(401, "Email or password invalid");
-  }
-  const passwordCompare = await bcrypt.compare(password, user.password);
-  if (!passwordCompare) {
-    throw HttpError(401, "Email or password invalid");
-  }
+  try {
+    const { email, password } = req.body;
+    const user = await User.findOne({ email });
 
-  const token = jwt.sign(payload, JWT_SECRET, { expiresIn: "23h" });
-  const { name } = user;
-  res.json({
-    token,
-    name,
-    email,
-  });
+    if (!user) {
+      return res.status(401).json({ message: "Email or password invalid" });
+    }
+
+    const passwordCompare = await bcrypt.compare(password, user.password);
+
+    if (!passwordCompare) {
+      return res.status(401).json({ message: "Email or password invalid" });
+    }
+
+    const payload = {
+      userId: user._id,
+    };
+
+    const token = jwt.sign(payload, JWT_SECRET, { expiresIn: "23h" });
+    const { name } = user;
+
+    res.json({
+      token,
+      name,
+      email,
+    });
+  } catch (error) {
+    console.error("Error during signin:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
 };
 
 const signout = async (req, res) => {
