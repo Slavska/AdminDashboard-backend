@@ -36,18 +36,12 @@ const signin = async (req, res) => {
     throw HttpError(401, "Email or password invalid");
   }
 
-  const owner = user._id;
-  const dashboards = await handleGetDashboardsData(owner);
-  const payload = {
-    id: user._id,
-  };
   const token = jwt.sign(payload, JWT_SECRET, { expiresIn: "23h" });
   const { name } = user;
   res.json({
     token,
     name,
     email,
-    dashboards,
   });
 };
 
@@ -61,12 +55,10 @@ const signout = async (req, res) => {
 };
 
 const getCurrent = async (req, res) => {
-  const { name, _id: owner, email } = req.user;
-  const dashboards = await handleGetDashboardsData(owner);
+  const { name, email } = req.user;
   res.json({
     name,
     email,
-    dashboards,
   });
 };
 
