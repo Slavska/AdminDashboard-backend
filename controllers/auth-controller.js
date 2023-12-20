@@ -67,12 +67,17 @@ const signout = async (req, res) => {
   });
 };
 
-const getCurrent = async (req, res) => {
-  const { name, email } = req.user;
-  res.json({
-    name,
-    email,
-  });
+const getCurrent = (req, res) => {
+  const token = req.headers.authorization;
+  try {
+    const decoded = jwt.verify(token, secretKey);
+    res.json({
+      name: decoded.name,
+      email: decoded.email,
+    });
+  } catch (error) {
+    res.status(401).json({ error: "Invalid token" });
+  }
 };
 
 export default {
