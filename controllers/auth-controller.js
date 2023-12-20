@@ -21,7 +21,6 @@ const signup = async (req, res) => {
   res.status(201).json({
     name: newUser.name,
     email: newUser.email,
-    avatar: newUser.avatarURL,
   });
 };
 
@@ -31,19 +30,16 @@ const signin = async (req, res) => {
     const user = await User.findOne({ email });
 
     if (!user) {
-      return res.status(401).json({ message: "Email or password invalid" });
+      throw HttpError(401, "Email or password invalid");
     }
-
     const passwordCompare = await bcrypt.compare(password, user.password);
-
     if (!passwordCompare) {
-      return res.status(401).json({ message: "Email or password invalid" });
+      throw HttpError(401, "Email or password invalid");
     }
 
     const payload = {
-      userId: user._id,
+      id: user._id,
     };
-
     const token = jwt.sign(payload, JWT_SECRET, { expiresIn: "23h" });
     const { name } = user;
 
@@ -68,11 +64,13 @@ const signout = async (req, res) => {
 };
 
 const getCurrent = async (req, res) => {
+  console.log(req);
   const { name, email } = req.user;
   res.json({
     name,
     email,
   });
+  console.log(res);
 };
 
 export default {
