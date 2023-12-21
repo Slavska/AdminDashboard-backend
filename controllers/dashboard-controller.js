@@ -8,7 +8,7 @@ import Supplier from "../models/supplier.js";
 export const getDashboardData = async (req, res, next) => {
   try {
     const { page = 1 } = req.query;
-    const perPage = 7;
+    const perPage = 6;
     const skip = (page - 1) * perPage;
 
     const totalDashboards = await Dashboard.countDocuments({});
